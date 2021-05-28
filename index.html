@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<!-- saved from url=(0073)https://topbidder.s3-ap-northeast-1.amazonaws.com/token_distribution.html -->
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=2.0" />
+    <title>chart</title>
+    <script
+      src="./chart_files/Chart.min.js"
+      integrity="sha512-d9xgZrVZpmmQlfonhQUvTR7lMPtO7NkZMkA0ABN3PHCbKA5nqylQ/yWlFAyY6hYgdF1Qh6nYiuADWwKB4C2WSw=="
+      crossorigin="anonymous"
+    ></script>
+    <style type="text/css">
+      /* Chart.js */
+      @keyframes chartjs-render-animation {
+        from {
+          opacity: 0.99;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .chartjs-render-monitor {
+        animation: chartjs-render-animation 1ms;
+      }
+      .chartjs-size-monitor,
+      .chartjs-size-monitor-expand,
+      .chartjs-size-monitor-shrink {
+        position: absolute;
+        direction: ltr;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        pointer-events: none;
+        visibility: hidden;
+        z-index: -1;
+      }
+      .chartjs-size-monitor-expand > div {
+        position: absolute;
+        width: 1000000px;
+        height: 1000000px;
+        left: 0;
+        top: 0;
+      }
+      .chartjs-size-monitor-shrink > div {
+        position: absolute;
+        width: 200%;
+        height: 200%;
+        left: 0;
+        top: 0;
+      }
+    </style>
+  </head>
+
+  <body data-new-gr-c-s-check-loaded="14.1010.0" data-gr-ext-installed="">
+    <div style="width: 1000px; height: 800px">
+      <div class="chartjs-size-monitor">
+        <div class="chartjs-size-monitor-expand"><div class=""></div></div>
+        <div class="chartjs-size-monitor-shrink"><div class=""></div></div>
+      </div>
+      <canvas
+        id="myChart"
+        width="1000"
+        height="618"
+        style="display: block; width: 1000px; height: 618px"
+        class="chartjs-render-monitor"
+      ></canvas>
+    </div>
+    <!-- 上面是面积折线图 -->
+    <div style="width: 600px; height: 400px">
+      <div class="chartjs-size-monitor">
+        <div class="chartjs-size-monitor-expand"><div class=""></div></div>
+        <div class="chartjs-size-monitor-shrink"><div class=""></div></div>
+      </div>
+      <canvas
+        id="pieChart"
+        width="600"
+        height="400"
+        class="chartjs-render-monitor"
+        style="display: block"
+      ></canvas>
+    </div>
+    <script>
+      function creat_datasets(label, data, line_color, background_color) {
+        // 传入分别是线条名称,传入的数据,线条本体颜色,线条遮罩部分颜色,两个颜色都可以传入rgba般透明色
+        return {
+          label: label, //第一条线名称
+          steppedLine: false,
+          data: data,
+          borderColor: line_color,
+          fill: "origin",
+          backgroundColor: background_color,
+        };
+      }
+
+      window.onload = function () {
+        var container = document.querySelector(".container");
+
+        let chartColors = {
+          blue: "rgb(54, 162, 235)",
+          green: "rgb(75, 192, 192)",
+          grey: "rgb(201, 203, 207)",
+          orange: "rgb(255, 159, 64)",
+          purple: "rgb(153, 102, 255)",
+          red: "rgb(255, 99, 132)",
+          yellow: "rgb(255, 205, 86)",
+          springgreen: "rgb(0, 255, 127)",
+          mistyrose: "rgb(255, 228, 225)",
+          maroon: "rgb(255, 52, 179)",
+          skyblue: "rgb(0, 191, 255)",
+          lightblue: "rgb(191, 239, 255)",
+        }; //配置不同的颜色
+
+        let ctx = document.getElementById("myChart").getContext("2d");
+        // 获取图表本体
+
+        let details = {
+          steppedLine: false,
+          label: "No Step Interpolation",
+        };
+        // Community 45% 5 years(check)
+        let CommunityData = [
+          0.0, 0.75, 1.5, 2.25, 3.0, 3.75, 4.5, 5.25, 6.0, 6.75, 7.5, 8.25, 9.0,
+          9.75, 10.5, 11.25, 12.0, 12.75, 13.5, 14.25, 15.0, 15.75, 16.5, 17.25,
+          18.0, 18.75, 19.5, 20.25, 21.0, 21.75, 22.5, 23.25, 24.0, 24.75, 25.5,
+          26.25, 27.0, 27.75, 28.5, 29.25, 30.0, 30.75, 31.5, 32.25, 33.0,
+          33.75, 34.5, 35.25, 36.0, 36.75, 37.5, 38.25, 39.0, 39.75, 40.5,
+          41.25, 42.0, 42.75, 43.5, 44.25, 45.0, 45.0,
+        ];
+
+        // Private Sale 12%
+        let InvestorsData = [
+          0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0.33, 0.67, 1.0, 1.33, 1.67, 2.0, 2.33, 2.67, 3.0, 3.33, 3.67, 4.0,
+          4.33, 4.67, 5.0, 5.33, 5.67, 6.0, 6.33, 6.67, 7.0, 7.33, 7.67, 8.0,
+          8.33, 8.67, 9.0, 9.33, 9.67, 10.0, 10.33, 10.67, 11.0, 11.33, 11.67,
+          12.0, 12.0,
+        ];
+
+        // let Private2Data = [
+        //   0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        //   0, 0, 1.92, 3.83, 5.75, 7.67, 9.58, 11.5, 13.42, 15.33, 17.25, 19.17,
+        //   21.08, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0,
+        //   23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0, 23.0,
+        //   23.0, 23.0, 23.0, 23.0,
+        // ];
+
+        // Team 12%
+        let TeamData = [
+          0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0.33, 0.67, 1.0, 1.33, 1.67, 2.0, 2.33, 2.67, 3.0, 3.33, 3.67, 4.0,
+          4.33, 4.67, 5.0, 5.33, 5.67, 6.0, 6.33, 6.67, 7.0, 7.33, 7.67, 8.0,
+          8.33, 8.67, 9.0, 9.33, 9.67, 10.0, 10.33, 10.67, 11.0, 11.33, 11.67,
+          12.0, 12.0,
+        ];
+        // Strategy(Chi) Reward 10% (check)
+        let ProtocolLabsData = [
+          0, 0, 0, 0, 0, 0, 0.42, 0.83, 1.25, 1.67, 2.08, 2.5, 2.92, 3.33, 3.75,
+          4.17, 4.58, 5.0, 5.42, 5.83, 6.25, 6.67, 7.08, 7.5, 7.92, 8.33, 8.75,
+          9.17, 9.58, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0,
+          10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0,
+          10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0,
+          10.0,
+        ];
+        // Seed Sale 8%
+        let SeedSaleData = [
+          1.33, 2.67, 4.0, 5.33, 6.67, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,
+          8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,
+          8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,
+          8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,
+          8.0, 8.0, 8.0, 8.0, 8.0, 8.0, 8.0,
+        ];
+
+        // LiquidityMiningData 5%
+        let LiquidityMiningData = [
+          0.42, 0.83, 1.25, 1.67, 2.08, 2.5, 2.92, 3.33, 3.75, 4.17, 4.58, 5.0,
+          5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0,
+          5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0,
+          5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0,
+          5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0,
+        ];
+
+        // IDO 4%
+        let IDOData = [
+          0.33, 0.67, 1.0, 1.33, 1.67, 2.0, 2.33, 2.67, 3.0, 3.33, 3.67, 4.0,
+          4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0,
+          4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0,
+          4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0,
+          4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0,
+          4.0, 4.0, 4.0, 4.0, 4.0, 4.0,
+        ];
+
+        // Airdrop 2%
+        let AirdropData = [
+          0.0, 0.0, 0.0, 0.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+          2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+          2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+          2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+          2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+        ];
+        // Advisors 2%
+        let AdvisorsData = [
+          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+          2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+          2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+          2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+          2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0,
+        ];
+
+        let config = {
+          type: "line",
+          data: {
+            labels: [...Array(61).keys()], //这里填写x轴数量,我这是40天的
+            datasets: [
+              creat_datasets(
+                "Ecosysmtem Development",
+                CommunityData,
+                chartColors.blue,
+                "rgba(54, 162, 235,.3)"
+              ),
+              creat_datasets(
+                "Private Sale",
+                InvestorsData,
+                chartColors.orange,
+                "rgba(255, 159, 64,.3)"
+              ),
+              creat_datasets(
+                "Team",
+                TeamData,
+                chartColors.red,
+                "rgba(255, 99, 132,.3)"
+              ),
+              creat_datasets(
+                "Strategy(Chi) Reward",
+                ProtocolLabsData,
+                chartColors.purple,
+                "rgba(153, 102, 255,.3)"
+              ),
+              // maroon: "rgb(255, 52, 179)",
+              creat_datasets(
+                "Seed Sale",
+                SeedSaleData,
+                chartColors.maroon,
+                "rgba(255, 52, 179,.3)"
+              ),
+
+              creat_datasets(
+                "Liquidity Mining",
+                LiquidityMiningData,
+                chartColors.green,
+                "rgba(75, 192, 192,.3)"
+              ),
+              creat_datasets(
+                "IDO",
+                IDOData,
+                chartColors.yellow,
+                "rgba(255, 255, 0,.3)"
+              ),
+
+              creat_datasets(
+                "Airdrop",
+                AirdropData,
+                chartColors.lightblue,
+                "rgba(191, 239, 255,.3)"
+              ),
+              creat_datasets(
+                "Advisors",
+                AdvisorsData,
+                chartColors.mistyrose,
+                "rgba(255, 228, 225,.3)"
+              ),
+            ],
+          },
+          options: {
+            responsive: true,
+            title: {
+              display: true,
+              fontSize: 16,
+              text: "Schedule of Tokens Unlocking on Mainnet Launch Date",
+            },
+            tooltips: {
+              mode: "nearest",
+              mode: "index",
+            },
+            scales: {
+              xAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: "Months since mainnet launch date",
+                    fontSize: 12,
+                  },
+                  ticks: {
+                    beginAtZero: false,
+                    min: 0,
+                    max: 60,
+                  },
+                },
+              ],
+              yAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: "Token released",
+                    fontSize: 12,
+                  },
+                  stacked: true,
+                  ticks: {
+                    // 在ticks中包含一个美元符号
+                    callback: function (value, index, values) {
+                      return value + "m";
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        };
+        new Chart(ctx, config);
+        // 面积图结束
+
+        let ctx2 = document.getElementById("pieChart").getContext("2d"); //根据id获取第二个图的canvas
+        var myPieChart = new Chart(ctx2, {
+          type: "pie",
+          data: {
+            datasets: [
+              {
+                steppedLine: false,
+                fill: "origin",
+                backgroundColor: [
+                  chartColors.blue,
+                  chartColors.red,
+                  chartColors.orange,
+                  chartColors.green,
+                  chartColors.purple,
+                  chartColors.lightblue,
+                  chartColors.mistyrose,
+                  chartColors.springgreen,
+                  chartColors.yellow,
+                  chartColors.skyblue,
+                ], //按照顺序填入颜色
+                data: [45, 12, 12, 10, 8, 5, 4, 2, 2], //按照顺序填入数据
+              },
+            ],
+
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            labels: [
+              "Community",
+              "Team",
+              "Investors",
+              "Liquidity Mining",
+              "Airdrop",
+              "Advisors",
+              "Protocol Labs",
+            ],
+          },
+          options: {
+            title: {
+              display: true,
+              fontSize: 16,
+              text: "Token Distribution of Total Supply",
+            },
+            legend: {
+              display: true,
+              position: "right",
+            },
+            cutoutPercentage: 50,
+            animation: {
+              animateRotate: true,
+              animateScale: true,
+            },
+          },
+        });
+      };
+    </script>
+  </body>
+</html>
